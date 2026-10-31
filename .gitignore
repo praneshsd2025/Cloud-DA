@@ -1,0 +1,38 @@
+﻿# Environment variables and secrets
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# Certificates and private keys
+*.key
+*.pem
+*.pfx
+*.p12
+*.cer
+*.crt
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local development
+.vscode/
+
+# Original backup - keep local
+_backup_original/
+
+# Local certificates
+gazeboexpress.cer
+gazeboexpress.pfx
+tls.crt
+tls.key
+
+# Local deployment and test artifacts
+*.log
+
+kubernetes/tls-secret.yaml

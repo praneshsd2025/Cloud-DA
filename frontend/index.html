@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GazeboExpress | Smart Campus Food Ordering & Queue Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Authgear Web SDK & Client Configuration -->
+    <script src="https://unpkg.com/@authgear/web@latest/dist/authgear-web.iife.js"></script>
+    <script src="config.js"></script>
+</head>
+
+<body>
+    <!-- Unauthenticated Authgear Welcome / Login Screen -->
+    <div class="auth-screen-overlay" id="authScreen">
+        <div class="auth-card">
+            <div class="auth-brand">
+                <div class="auth-logo-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                        <line x1="6" y1="1" x2="6" y2="4"></line>
+                        <line x1="10" y1="1" x2="10" y2="4"></line>
+                        <line x1="14" y1="1" x2="14" y2="4"></line>
+                    </svg>
+                </div>
+                <h1>Gazebo<span>Express</span></h1>
+                <p class="auth-brand-tag">Campus Smart Canteen</p>
+            </div>
+
+            <div class="auth-card-body">
+                <h2>Welcome to GazeboExpress</h2>
+                <p class="auth-desc">Sign in with your campus Authgear credentials to explore the menu, customize meals,
+                    track live kitchen queues, and place your order.</p>
+
+                <div class="auth-status-box" id="authStatusBox" style="display: none;">
+                    <div class="auth-status-spinner" id="authStatusSpinner"></div>
+                    <span id="authStatusText">Processing authentication...</span>
+                </div>
+
+                <div class="auth-actions" id="authActionBtns">
+                    <button class="primary-btn auth-main-btn" id="authgearLoginBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                            <polyline points="10 17 15 12 10 7"></polyline>
+                            <line x1="15" y1="12" x2="3" y2="12"></line>
+                        </svg>
+                        <span>Continue with GazeboExpress</span>
+                    </button>
+
+                    <button class="secondary-btn auth-sub-btn" id="authgearSignupBtn">
+                        <span>Register New Account</span>
+                    </button>
+                </div>
+
+                <div class="auth-footer-note">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    <span>Secured by Authgear Identity Cloud & OAuth 2.0 PKCE</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container" id="appContainer" style="display: none;">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-logo">
+                    <div class="brand-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                            <line x1="6" y1="1" x2="6" y2="4"></line>
+                            <line x1="10" y1="1" x2="10" y2="4"></line>
+                            <line x1="14" y1="1" x2="14" y2="4"></line>
+                        </svg>
+                    </div>
+                    <div class="brand-text">
+                        <h2>Gazebo<span>Express</span></h2>
+                        <p class="brand-sub">Campus Smart Canteen</p>
+                    </div>
+                </div>
+                <button class="mobile-close-btn" id="mobileCloseBtn" aria-label="Close Sidebar">&times;</button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item" data-view="overview" id="navOverview">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    <span>Overview</span>
+                </a>
+                <a href="#" class="nav-item active" data-view="menu" id="navMenu">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path>
+                        <path d="M6 6h10"></path>
+                        <path d="M6 10h10"></path>
+                        <path d="M6 14h6"></path>
+                    </svg>
+                    <span>Menu</span>
+                </a>
+                <a href="#" class="nav-item" data-view="orders" id="navOrders">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                        <path d="M9 14l2 2 4-4"></path>
+                    </svg>
+                    <span>Orders</span>
+                    <span class="nav-badge" id="sidebarOrdersBadge">0</span>
+                </a>
+                <a href="#" class="nav-item" data-view="delivery" id="navQueue">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="1" y="3" width="15" height="13"></rect>
+                        <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                        <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                        <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                    </svg>
+                    <span>Smart Queue</span>
+                </a>
+                <a href="#" class="nav-item" data-view="reviews" id="navReviews">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polygon
+                            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                        </polygon>
+                    </svg>
+                    <span>Rating & Reviews</span>
+                </a>
+                <a href="#" class="nav-item" data-view="profile" id="navProfile">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>My Profile</span>
+                </a>
+                <a href="#" class="nav-item" data-view="analytics" id="navAnalytics">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                    <span>Analytics</span>
+                </a>
+                <a href="#" class="nav-item" data-view="settings" id="navSettings">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z">
+                        </path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-queue-card" id="sidebarQueueWidget">
+                    <div class="queue-status-dot pulse-low" id="queueStatusDot"></div>
+                    <div class="queue-status-info">
+                        <p class="queue-label">Live Canteen Queue</p>
+                        <h4 id="sidebarQueueText">Low (3 Active)</h4>
+                        <small id="sidebarWaitText">~5-10m estimated wait</small>
+                    </div>
+                </div>
+
+                <button class="cart-trigger-btn" id="openCartBtn">
+                    <div class="cart-btn-left">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="9" cy="21" r="1"></circle>
+                            <circle cx="20" cy="21" r="1"></circle>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                        <span id="cartCountBadge">0 Items</span>
+                    </div>
+                    <span class="cart-total-badge" id="cartTotalBadge">₹0</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Wrapper -->
+        <div class="main-wrapper">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle Navigation">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                    <div class="search-bar-container">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" id="globalSearchInput" placeholder="Search menu, categories, ingredients..."
+                            autocomplete="off">
+                        <button class="clear-search-btn" id="clearSearchBtn" style="display: none;">&times;</button>
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <!-- Notification Bell with Popover -->
+                    <div class="notification-wrapper">
+                        <button class="header-icon-btn" id="notificationBtn" aria-label="Notifications">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                            </svg>
+                            <span class="notification-badge" id="notificationBadge">0</span>
+                        </button>
+
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            <div class="notif-header">
+                                <h4>Notifications</h4>
+                                <button class="mark-all-read-btn" id="markAllReadBtn">Clear All</button>
+                            </div>
+                            <div class="notif-list" id="notificationList">
+                                <p class="empty-notif">No new notifications</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive User Profile Dropdown Pill -->
+                    <div class="user-profile-wrapper" id="userProfileWrapper">
+                        <button class="user-profile-btn" id="userProfileBtn" aria-expanded="false"
+                            aria-label="Open Profile Menu">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23FF5E1E'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' fill='%23ffffff' font-family='sans-serif' font-weight='700' font-size='38'%3EGE%3C/text%3E%3C/svg%3E"
+                                alt="User Profile" class="user-avatar" id="userAvatar">
+                            <div class="user-info">
+                                <h4 id="userNameDisplay">Gazebo User</h4>
+                                <div class="user-badge-row">
+                                    <span class="user-role-badge" id="userRoleBadge">Student</span>
+                                    <span class="user-sub-badge" id="userRegNoBadge"></span>
+                                </div>
+                            </div>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="profile-caret">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+
+                        <!-- Compact Modern Pop-up Dropdown -->
+                        <div class="profile-dropdown" id="profileDropdown">
+                            <div class="dropdown-header">
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23FF5E1E'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' fill='%23ffffff' font-family='sans-serif' font-weight='700' font-size='38'%3EGE%3C/text%3E%3C/svg%3E"
+                                    alt="Avatar" class="dropdown-avatar" id="dropdownAvatar">
+                                <div class="dropdown-meta">
+                                    <h4 id="dropdownName">Gazebo User</h4>
+                                    <span class="dropdown-role-tag" id="dropdownRole">Student</span>
+                                    <span class="dropdown-sub-text" id="dropdownId"></span>
+                                    <p class="dropdown-email" id="dropdownEmail"></p>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-menu-list">
+                                <button class="dropdown-item" id="dropdownViewProfile">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                                    <span>👤 View Profile</span>
+                                </button>
+                                <button class="dropdown-item" id="dropdownEditProfile">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                    </svg>
+                                    <span>✏️ Edit Profile</span>
+                                </button>
+                                <button class="dropdown-item" id="dropdownSettings">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                        <path
+                                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                                        </path>
+                                    </svg>
+                                    <span>⚙ Settings</span>
+                                </button>
+                                <div class="dropdown-divider"></div>
+                                <button class="dropdown-item dropdown-logout" id="dropdownLogout">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                        <polyline points="16 17 21 12 16 7"></polyline>
+                                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                                    </svg>
+                                    <span>🚪 Logout</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content Area (Views) -->
+            <main class="main-content">
+                <!-- VIEW 1: MENU (Default & Primary View Matching Reference) -->
+                <section class="content-view active" id="view-menu">
+                    <div class="page-title-row">
+                        <div>
+                            <h1 class="page-title">Menu</h1>
+                            <p class="page-subtitle">Freshly prepared campus meals, quick bites & refreshing drinks</p>
+                        </div>
+                        <div class="page-actions-row">
+                            <div class="sort-wrapper">
+                                <label for="sortSelect">Sort:</label>
+                                <select id="sortSelect" class="styled-select">
+                                    <option value="rating_desc">Rating: High to low</option>
+                                    <option value="rating_asc">Rating: Low to high</option>
+                                    <option value="price_asc">Price: Low to high</option>
+                                    <option value="price_desc">Price: High to low</option>
+                                    <option value="popularity">Most Popular</option>
+                                </select>
+                            </div>
+                            <button class="primary-btn add-menu-btn" id="openAddMenuModalBtn">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                <span>Add Menu</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Category Cards Horizontal Scroll Row -->
+                    <div class="category-carousel-wrapper">
+                        <div class="category-carousel" id="categoryCarousel">
+                            <!-- Populated dynamically from real DB categories -->
+                        </div>
+                    </div>
+
+                    <!-- Food Items Grid -->
+                    <div class="menu-grid-header">
+                        <h3 id="currentCategoryTitle">All Items</h3>
+                        <span class="items-count-tag" id="itemsCountTag">Loading...</span>
+                    </div>
+
+                    <div class="food-grid" id="foodGrid">
+                        <!-- Food cards dynamically rendered -->
+                    </div>
+
+                    <div class="empty-state" id="menuEmptyState" style="display: none;">
+                        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M8 12h8"></path>
+                        </svg>
+                        <h3>No Food Items Found</h3>
+                        <p>No items match your selected category or search query.</p>
+                        <button class="secondary-btn" id="resetFiltersBtn">Reset Filters</button>
+                    </div>
+                </section>
+
+                <!-- VIEW 2: OVERVIEW / DASHBOARD -->
+                <section class="content-view" id="view-overview">
+                    <div class="page-title-row">
+                        <div>
+                            <h1 class="page-title">Dashboard Overview</h1>
+                            <p class="page-subtitle">Real-time campus order metrics, sales insights, and canteen queue
+                                status</p>
+                        </div>
+                        <button class="secondary-btn" id="refreshStatsBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polyline points="23 4 23 10 17 10"></polyline>
+                                <polyline points="1 20 1 14 7 14"></polyline>
+                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                            </svg>
+                            <span>Refresh Live</span>
+                        </button>
+                    </div>
+
+                    <!-- Stat Summary Cards -->
+                    <div class="stats-cards-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon-wrap icon-orders">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2">
+                                    </path>
+                                    <rect x="8" y="2" width="8" height="4" rx="1"></rect>
+                                </svg>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-label">Total Orders</span>
+                                <h3 class="stat-value" id="statTotalOrders">-</h3>
+                                <small class="stat-sub">Lifetime campus orders</small>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon-wrap icon-active">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-label">Active Orders</span>
+                                <h3 class="stat-value" id="statActiveOrders">-</h3>
+                                <small class="stat-sub">In queue & preparing</small>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon-wrap icon-ready">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-label">Ready for Pickup</span>
+                                <h3 class="stat-value" id="statReadyOrders">-</h3>
+                                <small class="stat-sub">Waiting at counter</small>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon-wrap icon-revenue">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                </svg>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-label">Total Revenue</span>
+                                <h3 class="stat-value" id="statTotalRevenue">₹-</h3>
+                                <small class="stat-sub">Completed order billing</small>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon-wrap icon-menu">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path>
+                                </svg>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-label">Available Items</span>
+                                <h3 class="stat-value" id="statAvailableItems">-</h3>
+                                <small class="stat-sub" id="statTotalMenuItems">- total items</small>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon-wrap icon-rating">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <polygon
+                                        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                    </polygon>
+                                </svg>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-label">Campus Rating</span>
+                                <h3 class="stat-value" id="statAvgRating">4.8 ★</h3>
+                                <small class="stat-sub" id="statTotalReviews">- reviews</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Overview Widgets (Orders by Status & Popular Items) -->
+                    <div class="overview-widgets-grid">
+                        <div class="widget-card">
+                            <div class="widget-header">
+                                <h3>Orders by Status</h3>
+                                <span class="badge-outline">Live Aggregation</span>
+                            </div>
+                            <div class="status-summary-bars" id="statusSummaryContainer">
+                                <!-- Rendered dynamically -->
+                            </div>
+                        </div>
+
+                        <div class="widget-card">
+                            <div class="widget-header">
+                                <h3>Top Ordered Campus Meals</h3>
+                                <span class="badge-outline">Best Selling</span>
+                            </div>
+                            <div class="popular-items-list" id="popularItemsContainer">
+                                <!-- Rendered dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 3: ORDERS MANAGEMENT -->
+                <section class="content-view" id="view-orders">
+                    <div class="page-title-row">
+                        <div>
+                            <h1 class="page-title">Order Management</h1>
+                            <p class="page-subtitle">Track, filter, and advance campus meal orders in real-time</p>
+                        </div>
+                        <div class="order-filter-chips" id="orderStatusFilters">
+                            <button class="filter-chip active" data-filter="All">All</button>
+                            <button class="filter-chip" data-filter="Placed">Placed</button>
+                            <button class="filter-chip" data-filter="Preparing">Preparing</button>
+                            <button class="filter-chip" data-filter="Ready">Ready</button>
+                            <button class="filter-chip" data-filter="Completed">Completed</button>
+                            <button class="filter-chip" data-filter="Cancelled">Cancelled</button>
+                        </div>
+                    </div>
+
+                    <div class="orders-table-card">
+                        <div class="table-responsive">
+                            <table class="styled-table" id="ordersTable">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Student</th>
+                                        <th>Items Ordered</th>
+                                        <th>Total</th>
+                                        <th>Pickup Time</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ordersTableBody">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="empty-state" id="ordersEmptyState" style="display: none;">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8"
+                                stroke-width="1.5">
+                                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2">
+                                </path>
+                            </svg>
+                            <h3>No Orders Found</h3>
+                            <p>There are no orders matching this filter.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 4: SMART QUEUE & DELIVERY (Kanban Board) -->
+                <section class="content-view" id="view-delivery">
+                    <div class="page-title-row">
+                        <div>
+                            <h1 class="page-title">Smart Queue & Kitchen Flow</h1>
+                            <p class="page-subtitle">Intelligent campus queue forecasting and Kanban kitchen status
+                                progression</p>
+                        </div>
+                    </div>
+
+                    <!-- Live Queue Condition Banner -->
+                    <div class="queue-meter-card" id="queueMeterCard">
+                        <div class="queue-meter-header">
+                            <div>
+                                <span class="queue-badge-pill" id="queueConditionPill">Queue: Low</span>
+                                <h2 class="queue-meter-title" id="queueConditionTitle">Smooth Campus Flow (~5-10m wait)
+                                </h2>
+                                <p class="queue-meter-desc" id="queueConditionDesc">Kitchen is operating smoothly.
+                                    Orders placed now will be ready promptly.</p>
+                            </div>
+                            <div class="queue-counts-row">
+                                <div class="queue-mini-stat">
+                                    <span class="val" id="queueActiveVal">0</span>
+                                    <span class="lbl">Active</span>
+                                </div>
+                                <div class="queue-mini-stat">
+                                    <span class="val" id="queuePlacedVal">0</span>
+                                    <span class="lbl">Placed</span>
+                                </div>
+                                <div class="queue-mini-stat">
+                                    <span class="val" id="queuePreparingVal">0</span>
+                                    <span class="lbl">Preparing</span>
+                                </div>
+                                <div class="queue-mini-stat">
+                                    <span class="val" id="queueReadyVal">0</span>
+                                    <span class="lbl">Ready</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Visual meter bar -->
+                        <div class="queue-progress-track">
+                            <div class="queue-progress-bar" id="queueProgressBar" style="width: 20%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Kanban Kitchen Pipeline -->
+                    <div class="kanban-board">
+                        <!-- Column 1: Placed -->
+                        <div class="kanban-column" id="kanban-placed">
+                            <div class="kanban-col-header col-placed">
+                                <h4>1. Placed</h4>
+                                <span class="col-count" id="count-placed">0</span>
+                            </div>
+                            <div class="kanban-cards-container" id="cards-placed"></div>
+                        </div>
+
+                        <!-- Column 2: Preparing -->
+                        <div class="kanban-column" id="kanban-preparing">
+                            <div class="kanban-col-header col-preparing">
+                                <h4>2. Preparing</h4>
+                                <span class="col-count" id="count-preparing">0</span>
+                            </div>
+                            <div class="kanban-cards-container" id="cards-preparing"></div>
+                        </div>
+
+                        <!-- Column 3: Ready for Pickup -->
+                        <div class="kanban-column" id="kanban-ready">
+                            <div class="kanban-col-header col-ready">
+                                <h4>3. Ready for Pickup</h4>
+                                <span class="col-count" id="count-ready">0</span>
+                            </div>
+                            <div class="kanban-cards-container" id="cards-ready"></div>
+                        </div>
+
+                        <!-- Column 4: Completed -->
+                        <div class="kanban-column" id="kanban-completed">
+                            <div class="kanban-col-header col-completed">
+                                <h4>4. Completed</h4>
+                                <span class="col-count" id="count-completed">0</span>
+                            </div>
+                            <div class="kanban-cards-container" id="cards-completed"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 5: RATINGS & REVIEWS -->
+                <section class="content-view" id="view-reviews">
+                    <div class="page-title-row">
+                        <div>
+                            <h1 class="page-title">Ratings & Reviews</h1>
+                            <p class="page-subtitle">Real student feedback, taste ratings, and canteen service reviews
+                            </p>
+                        </div>
+                        <button class="primary-btn" id="openAddReviewModalBtn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <polygon
+                                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                </polygon>
+                            </svg>
+                            <span>Leave a Review</span>
+                        </button>
+                    </div>
+
+                    <!-- Review Score Overview -->
+                    <div class="review-score-grid">
+                        <div class="review-score-card">
+                            <span class="rating-big-number" id="reviewAvgScore">0.0</span>
+                            <div class="stars-row" id="reviewAvgStars">☆☆☆☆☆</div>
+                            <p class="review-sub" id="reviewCountSummary">No campus reviews yet</p>
+                        </div>
+
+                        <div class="rating-breakdown-card" id="ratingBreakdownContainer">
+                            <!-- Populated with star breakdown bars -->
+                        </div>
+                    </div>
+
+                    <!-- Reviews List -->
+                    <div class="reviews-list-wrapper">
+                        <h3 class="section-subheading">Recent Student Reviews</h3>
+                        <div class="reviews-grid" id="reviewsGrid">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 6: ANALYTICS -->
+                <section class="content-view" id="view-analytics">
+                    <div class="page-title-row">
+                        <div>
+                            <h1 class="page-title">Canteen Analytics</h1>
+                            <p class="page-subtitle">Deep dive into sales trends, meal category popularity, and peak
+                                campus hours</p>
+                        </div>
+                    </div>
+
+                    <div class="analytics-charts-grid">
+                        <div class="chart-card">
+                            <div class="widget-header">
+                                <h3>Menu Distribution by Category</h3>
+                                <span class="badge-outline">Catalog Depth</span>
+                            </div>
+                            <div class="category-analytics-bars" id="analyticsCategoryBars"></div>
+                        </div>
+
+                        <div class="chart-card">
+                            <div class="widget-header">
+                                <h3>Order Status Distribution</h3>
+                                <span class="badge-outline">Pipeline Health</span>
+                            </div>
+                            <div class="status-analytics-bars" id="analyticsStatusBars"></div>
+                        </div>
+
+                        <div class="chart-card full-width-card">
+                            <div class="widget-header">
+                                <h3>Popular Pickup Slots</h3>
+                                <span class="badge-outline">Campus Rush Hours</span>
+                            </div>
+                            <div class="pickup-slots-list" id="analyticsPickupSlots"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 7: SETTINGS -->
+                <section class="content-view" id="view-settings">
+                    <div class="page-title-row">
+                        <div>
+                            <h1 class="page-title">Canteen Settings</h1>
+                            <p class="page-subtitle">Configure operating hours, smart queue thresholds, and campus hub
+                                identity</p>
+                        </div>
+                    </div>
+
+                    <div class="settings-container">
+                        <form id="settingsForm" class="styled-form settings-card">
+                            <div class="form-group">
+                                <label for="settingCanteenName">Canteen Hub Name</label>
+                                <input type="text" id="settingCanteenName" required>
+                            </div>
+
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label for="settingOperatingHours">Operating Hours</label>
+                                    <input type="text" id="settingOperatingHours" placeholder="e.g. 08:30 AM - 09:30 PM"
+                                        required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="settingPickupDuration">Default Pickup Duration</label>
+                                    <input type="text" id="settingPickupDuration" placeholder="e.g. 15 mins" required>
+                                </div>
+                            </div>
+
+                            <div class="form-section-title">
+                                <h4>Smart Queue Forecasting Thresholds</h4>
+                                <p>Set the number of concurrent active orders determining queue traffic state.</p>
+                            </div>
+
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label for="settingLowThreshold">Low Queue Threshold (Max orders for 'Low')</label>
+                                    <input type="number" id="settingLowThreshold" min="1" max="50" required>
+                                    <small>Default: 5 (Green condition: ~5-10m wait)</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="settingModThreshold">Moderate Queue Threshold (Max orders for
+                                        'Moderate')</label>
+                                    <input type="number" id="settingModThreshold" min="2" max="100" required>
+                                    <small>Default: 15 (Amber condition: ~15-25m wait)</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group checkbox-group">
+                                <label class="switch-label">
+                                    <input type="checkbox" id="settingNotifications" checked>
+                                    <span class="switch-slider"></span>
+                                    <span class="switch-text">Enable in-app kitchen alerts & order notifications</span>
+                                </label>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="primary-btn" id="saveSettingsBtn">Save Settings</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- VIEW 8: MY PROFILE -->
+                <section class="content-view" id="view-profile">
+                    <div class="page-title-row">
+                        <div>
+                            <h1 class="page-title">My Profile</h1>
+                            <p class="page-subtitle">Manage your campus account details, order history, and preferences
+                            </p>
+                        </div>
+                        <button class="primary-btn" id="openEditProfilePageBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                            <span>Edit Profile</span>
+                        </button>
+                    </div>
+
+                    <div class="profile-page-grid">
+                        <!-- Left Column: Profile Hero Card -->
+                        <div class="profile-hero-card">
+                            <div class="profile-cover-banner"></div>
+                            <div class="profile-avatar-wrap">
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23FF5E1E'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' fill='%23ffffff' font-family='sans-serif' font-weight='700' font-size='38'%3EGE%3C/text%3E%3C/svg%3E"
+                                    alt="Avatar" class="profile-hero-avatar" id="profileHeroAvatar">
+                                <span class="profile-role-pill" id="profileHeroRole">Student</span>
+                            </div>
+                            <div class="profile-hero-body">
+                                <h2 id="profileHeroName">Gazebo User</h2>
+                                <p class="profile-hero-email" id="profileHeroEmail"></p>
+                                <p class="profile-hero-id" id="profileHeroId"></p>
+                            </div>
+                            <div class="profile-quick-meta">
+                                <div class="meta-item">
+                                    <span class="meta-label">Identity Status</span>
+                                    <span class="meta-value verified-badge">Verified (Authgear)</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-label">Campus Role</span>
+                                    <span class="meta-value" id="profileHeroRoleText">Student</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Account Details & Stats -->
+                        <div class="profile-details-column">
+                            <div class="widget-card">
+                                <div class="widget-header">
+                                    <h3>Account Information</h3>
+                                    <span class="badge-outline">Identity</span>
+                                </div>
+                                <div class="profile-info-grid">
+                                    <div class="info-field">
+                                        <label>Full Name</label>
+                                        <p id="profileDetailName">Pranesh S D</p>
+                                    </div>
+                                    <div class="info-field">
+                                        <label>Email Address</label>
+                                        <p id="profileDetailEmail">pranesh@example.com</p>
+                                    </div>
+                                    <div class="info-field">
+                                        <label>Student / Register ID</label>
+                                        <p id="profileDetailId">25BCE1122</p>
+                                    </div>
+                                    <div class="info-field">
+                                        <label>Phone Number</label>
+                                        <p id="profileDetailPhone">+91 98765 43210</p>
+                                    </div>
+                                    <div class="info-field">
+                                        <label>Account Role</label>
+                                        <p id="profileDetailRole">Student</p>
+                                    </div>
+                                    <div class="info-field">
+                                        <label>Member Since</label>
+                                        <p id="profileDetailCreated">September 2026</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Student / User Activity Stats -->
+                            <div class="widget-card">
+                                <div class="widget-header">
+                                    <h3>Canteen Activity</h3>
+                                    <span class="badge-outline">Live Summary</span>
+                                </div>
+                                <div class="profile-stats-row">
+                                    <div class="p-stat-box">
+                                        <span class="p-stat-val" id="userStatOrders">0</span>
+                                        <span class="p-stat-lbl">Orders Placed</span>
+                                    </div>
+                                    <div class="p-stat-box">
+                                        <span class="p-stat-val" id="userStatSpent">₹0</span>
+                                        <span class="p-stat-lbl">Total Spent</span>
+                                    </div>
+                                    <div class="p-stat-box">
+                                        <span class="p-stat-val" id="userStatReviews">0</span>
+                                        <span class="p-stat-lbl">Reviews Shared</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Slide-over Student Cart Drawer -->
+    <div class="cart-drawer-overlay" id="cartOverlay"></div>
+    <aside class="cart-drawer" id="cartDrawer">
+        <div class="cart-drawer-header">
+            <div class="cart-title-wrap">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                <h3>Your Food Tray</h3>
+            </div>
+            <button class="close-drawer-btn" id="closeCartBtn" aria-label="Close Cart">&times;</button>
+        </div>
+
+        <div class="cart-drawer-body">
+            <!-- Current Queue Status Advice -->
+            <div class="cart-queue-notice" id="cartQueueNotice">
+                <span class="notice-icon">⚡</span>
+                <div class="notice-text">
+                    <strong id="cartQueueTitle">Queue: Low</strong>
+                    <span id="cartQueueDesc">Ready in ~10 mins after order</span>
+                </div>
+            </div>
+
+            <!-- Cart Items List -->
+            <div class="cart-items-container" id="cartItemsContainer">
+                <!-- Cart items rendered dynamically -->
+            </div>
+
+            <div class="cart-empty-state" id="cartEmptyState" style="display: none;">
+                <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                <h4>Your tray is empty</h4>
+                <p>Browse the delicious campus menu and add your favorite items!</p>
+            </div>
+
+            <!-- Order Placement Form -->
+            <div class="cart-order-form" id="cartOrderForm">
+                <h4>Pickup Details</h4>
+                <div class="form-group">
+                    <label for="cartStudentName">Student Name *</label>
+                    <input type="text" id="cartStudentName" placeholder="e.g. Pranesh S D" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="cartStudentId">Student ID / Reg No *</label>
+                    <input type="text" id="cartStudentId" placeholder="e.g. 25BCE1122" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Pickup Time Slot</label>
+                    <div class="pickup-time-chips">
+                        <button type="button" class="pickup-chip active" data-time="In 10 mins">In 10m</button>
+                        <button type="button" class="pickup-chip" data-time="In 15 mins">In 15m</button>
+                        <button type="button" class="pickup-chip" data-time="In 30 mins">In 30m</button>
+                        <button type="button" class="pickup-chip" data-time="Custom">Custom</button>
+                    </div>
+                    <input type="text" id="cartCustomPickup" placeholder="e.g. 1:15 PM or Lunch Break"
+                        style="display: none; margin-top: 8px;">
+                </div>
+
+                <div class="bill-summary">
+                    <div class="bill-row">
+                        <span>Items Subtotal</span>
+                        <span id="billSubtotal">₹0</span>
+                    </div>
+                    <div class="bill-row">
+                        <span>Campus Service Fee</span>
+                        <span class="text-free">FREE</span>
+                    </div>
+                    <div class="bill-row total-row">
+                        <span>Grand Total</span>
+                        <span id="billTotal">₹0</span>
+                    </div>
+                </div>
+
+                <button class="primary-btn place-order-submit-btn" id="placeOrderSubmitBtn">
+                    <span>Confirm & Place Order</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Modal: Add / Edit Menu Item -->
+    <div class="modal-overlay" id="menuModalOverlay">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 id="menuModalTitle">Add Menu Item</h3>
+                <button class="modal-close-btn" id="closeMenuModalBtn">&times;</button>
+            </div>
+            <form id="menuItemForm" class="styled-form modal-body">
+                <input type="hidden" id="menuItemId">
+
+                <div class="form-group">
+                    <label for="itemFormName">Item Name *</label>
+                    <input type="text" id="itemFormName" placeholder="e.g. Double Cheese Smash Burger" required>
+                </div>
+
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="itemFormCategory">Category *</label>
+                        <select id="itemFormCategory" required>
+                            <option value="Burgers">Burgers</option>
+                            <option value="Sandwiches">Sandwiches</option>
+                            <option value="Starters">Starters</option>
+                            <option value="Pasta">Pasta</option>
+                            <option value="Main Course">Main Course</option>
+                            <option value="Desserts">Desserts</option>
+                            <option value="Beverages">Beverages</option>
+                            <option value="Snacks">Snacks</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="itemFormPrice">Price (₹) *</label>
+                        <input type="number" id="itemFormPrice" min="1" step="0.5" placeholder="e.g. 150" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="itemFormDescription">Description</label>
+                    <textarea id="itemFormDescription" rows="2"
+                        placeholder="Brief description of flavors, toppings, or ingredients"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="itemFormImage">Food Image URL</label>
+                    <input type="url" id="itemFormImage" placeholder="https://images.unsplash.com/...">
+                    <small>Leave empty to use automatic high-res category food photo.</small>
+                    <div class="image-preview-wrap" id="imagePreviewWrap" style="display: none;">
+                        <img src="" alt="Preview" id="itemImagePreview">
+                    </div>
+                </div>
+
+                <div class="form-row-2 switch-row">
+                    <label class="switch-label">
+                        <input type="checkbox" id="itemFormAvailable" checked>
+                        <span class="switch-slider"></span>
+                        <span class="switch-text">Available in Stock</span>
+                    </label>
+
+                    <label class="switch-label">
+                        <input type="checkbox" id="itemFormBestseller">
+                        <span class="switch-slider"></span>
+                        <span class="switch-text">Bestseller Badge</span>
+                    </label>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="secondary-btn" id="cancelMenuModalBtn">Cancel</button>
+                    <button type="submit" class="primary-btn" id="saveMenuItemBtn">Save Menu Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Leave a Review -->
+    <div class="modal-overlay" id="reviewModalOverlay">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3>Rate & Review Meal</h3>
+                <button class="modal-close-btn" id="closeReviewModalBtn">&times;</button>
+            </div>
+            <form id="reviewForm" class="styled-form modal-body">
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="revStudentName">Student Name *</label>
+                        <input type="text" id="revStudentName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="revStudentId">Student ID</label>
+                        <input type="text" id="revStudentId" placeholder="e.g. 25BCE1122">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="revItemName">Menu Item (Optional)</label>
+                    <input type="text" id="revItemName" placeholder="e.g. Peanut Butter Chicken Burger">
+                </div>
+
+                <div class="form-group">
+                    <label>Your Rating *</label>
+                    <div class="star-rating-picker" id="starRatingPicker">
+                        <span class="star-pick" data-val="1">★</span>
+                        <span class="star-pick" data-val="2">★</span>
+                        <span class="star-pick" data-val="3">★</span>
+                        <span class="star-pick" data-val="4">★</span>
+                        <span class="star-pick active" data-val="5">★</span>
+                        <span class="rating-val-text" id="selectedStarValText">5.0 / 5.0 (Excellent)</span>
+                    </div>
+                    <input type="hidden" id="revRatingVal" value="5">
+                </div>
+
+                <div class="form-group">
+                    <label for="revComment">Your Review *</label>
+                    <textarea id="revComment" rows="3"
+                        placeholder="Tell other students about the taste, portion size, and pickup experience..."
+                        required></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="secondary-btn" id="cancelReviewModalBtn">Cancel</button>
+                    <button type="submit" class="primary-btn" id="submitReviewBtn">Post Review</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Order Success Confirmation Receipt -->
+    <div class="modal-overlay" id="orderSuccessModal">
+        <div class="modal-dialog order-success-dialog">
+            <div class="success-icon-badge">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+            <h2>Order Placed Successfully!</h2>
+            <p class="receipt-sub">Your meal request has been sent to the Gazebo kitchen.</p>
+
+            <div class="receipt-card">
+                <div class="receipt-row">
+                    <span>Order Reference</span>
+                    <strong id="receiptOrderId">#GE-XXXXXX</strong>
+                </div>
+                <div class="receipt-row">
+                    <span>Pickup Time</span>
+                    <strong id="receiptPickupTime">-</strong>
+                </div>
+                <div class="receipt-row">
+                    <span>Live Queue Status</span>
+                    <span class="receipt-badge" id="receiptQueueStatus">Low (~5-10m wait)</span>
+                </div>
+                <div class="receipt-row total-receipt-row">
+                    <span>Total Amount Paid</span>
+                    <strong id="receiptTotalAmount">₹0</strong>
+                </div>
+            </div>
+
+            <div class="order-success-actions">
+                <button class="primary-btn" id="viewPlacedOrderBtn">Track in Orders</button>
+                <button class="secondary-btn" id="closeReceiptBtn">Back to Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Confirm Delete Dialog -->
+    <div class="modal-overlay" id="confirmDeleteModal">
+        <div class="modal-dialog confirm-dialog">
+            <div class="warning-icon-wrap">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
+                    <path d="M3 6h18"></path>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+            </div>
+            <h3>Delete Menu Item?</h3>
+            <p id="deleteConfirmText">Are you sure you want to permanently remove this item from the canteen menu?</p>
+            <div class="confirm-actions">
+                <button class="secondary-btn" id="cancelDeleteBtn">Cancel</button>
+                <button class="danger-btn" id="confirmDeleteBtn">Delete Item</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: First-Time Account Profile Onboarding -->
+    <div class="modal-overlay" id="roleOnboardingModalOverlay">
+        <div class="modal-dialog onboarding-dialog">
+            <div class="modal-header">
+                <h3>Welcome to GazeboExpress</h3>
+            </div>
+
+            <div class="modal-body">
+                <p class="onboard-sub">
+                    Complete your campus profile to start ordering meals and tracking kitchen queues.
+                </p>
+
+                <!-- Verified Role Card (Authoritative role determined server-side from Authgear) -->
+                <div class="onboard-role-card" id="onboardRoleCard">
+                    <div class="onboard-role-icon" id="onboardRoleIcon">🎓</div>
+                    <div class="onboard-role-info">
+                        <div class="onboard-role-title-row">
+                            <h4 id="onboardRoleTitle">Student Account</h4>
+                            <span class="badge badge-success" id="onboardRoleBadge">Verified</span>
+                        </div>
+                        <p id="onboardRoleDesc">Standard campus ordering, smart queue tracking, and meal pickup access.</p>
+                        <small id="onboardRoleEmail" style="color: var(--text-muted); font-size: 11.5px;"></small>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 14px;">
+                    <label for="onboardName">Full Name *</label>
+                    <input type="text" id="onboardName" placeholder="e.g. Alex Johnson" required>
+                </div>
+
+                <div class="form-group" id="onboardRegNoGroup">
+                    <label for="onboardRegNo" id="onboardRegNoLabel">
+                        Student Register Number / ID *
+                    </label>
+                    <input type="text" id="onboardRegNo" placeholder="e.g. 25BCE1122" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="onboardPhone">Contact Phone Number *</label>
+                    <input type="tel" id="onboardPhone" placeholder="+91 98765 43210" required>
+                </div>
+
+                <div class="onboard-error-msg" id="onboardErrorMsg" style="display: none;"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="primary-btn full-width" id="confirmOnboardingBtn">
+                    Confirm & Enter GazeboExpress
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
