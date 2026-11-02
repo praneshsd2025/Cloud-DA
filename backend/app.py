@@ -1805,5 +1805,12 @@ def clear_notifications():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/api/instance", methods=["GET"])
+def instance_info():
+    return jsonify({
+        "instance": os.getenv("INSTANCE_ID", "unknown")
+    })
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

@@ -1,0 +1,53 @@
+services:
+  backend1:
+    build: ./backend
+    env_file:
+      - ./backend/.env.da3
+    expose:
+      - "5000"
+    environment:
+      INSTANCE_ID: backend1
+    restart: unless-stopped
+
+  backend2:
+    build: ./backend
+    env_file:
+      - ./backend/.env.da3
+    expose:
+      - "5000"
+    environment:
+      INSTANCE_ID: backend2
+    restart: unless-stopped
+
+  backend3:
+    build: ./backend
+    env_file:
+      - ./backend/.env.da3
+    expose:
+      - "5000"
+    environment:
+      INSTANCE_ID: backend3
+    restart: unless-stopped
+
+  nginx-lb:
+    image: nginx:alpine
+    ports:
+      - "8083:80"
+    volumes:
+      - ./nginx-lb.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend1
+      - backend2
+      - backend3
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8084:80"
+    depends_on:
+      - nginx-lb
+    restart: unless-stopped
+
+
+

@@ -1,0 +1,97 @@
+<mxfile host="app.diagrams.net" agent="ChatGPT">
+  <diagram id="gazeboexpress-q1d" name="Q1(d) Architecture">
+    <mxGraphModel dx="1776" dy="990" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=24;fontStyle=1;fontColor=#17365D;" value="GazeboExpress — Q1(d) Scaled Architecture" vertex="1">
+          <mxGeometry height="45" width="780" x="290" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="prod_boundary" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#6c8ebf;strokeWidth=2;dashed=1;fontSize=17;fontStyle=1;verticalAlign=top;spacingTop=12;fontColor=#365F91;" value="PRIMARY DEPLOYMENT — DA1 / GKE" vertex="1">
+          <mxGeometry height="710" width="1110" x="40" y="75" as="geometry" />
+        </mxCell>
+        <mxCell id="users" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#1f2937;fontSize=16;fontStyle=1;arcSize=12;" value="Users / Web Browser" vertex="1">
+          <mxGeometry height="55" width="330" x="430" y="125" as="geometry" />
+        </mxCell>
+        <mxCell id="frontend" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#64748b;fontColor=#1f2937;fontSize=14;" value="GazeboExpress Frontend&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Local DA3: host port 8084&lt;/font&gt;" vertex="1">
+          <mxGeometry height="65" width="330" x="430" y="215" as="geometry" />
+        </mxCell>
+        <mxCell id="lb" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#1f2937;fontSize=15;fontStyle=1;" value="Nginx Load Balancer&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Local DA3: host port 8083 · least_conn&lt;/font&gt;" vertex="1">
+          <mxGeometry height="75" width="410" x="390" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="b1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontColor=#1f2937;fontSize=14;" value="Backend 1&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Flask / Gunicorn&lt;br&gt;Container port 5000&lt;/font&gt;" vertex="1">
+          <mxGeometry height="90" width="250" x="130" y="465" as="geometry" />
+        </mxCell>
+        <mxCell id="b2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontColor=#1f2937;fontSize=14;" value="Backend 2&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Flask / Gunicorn&lt;br&gt;Container port 5000&lt;/font&gt;" vertex="1">
+          <mxGeometry height="90" width="250" x="450" y="465" as="geometry" />
+        </mxCell>
+        <mxCell id="b3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontColor=#1f2937;fontSize=14;" value="Backend 3&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Flask / Gunicorn&lt;br&gt;Container port 5000&lt;/font&gt;" vertex="1">
+          <mxGeometry height="90" width="250" x="770" y="465" as="geometry" />
+        </mxCell>
+        <mxCell id="db" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontColor=#1f2937;fontSize=15;fontStyle=1;" value="MongoDB Atlas&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Shared persistent database&lt;br&gt;DA3 tests use separate test DB&lt;/font&gt;" vertex="1">
+          <mxGeometry height="85" width="310" x="420" y="635" as="geometry" />
+        </mxCell>
+        <mxCell id="gke" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=12;" value="Hosting platform: Google Kubernetes Engine (GKE)" vertex="1">
+          <mxGeometry height="55" width="330" x="780" y="690" as="geometry" />
+        </mxCell>
+        <mxCell id="burst_boundary" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#d79b00;strokeWidth=2;dashed=1;fontSize=15;fontStyle=1;verticalAlign=top;spacingTop=12;fontColor=#a66b00;" value="PROPOSED EXTENSION (NOT IMPLEMENTED / TESTED)" vertex="1">
+          <mxGeometry height="710" width="320" x="1210" y="95" as="geometry" />
+        </mxCell>
+        <mxCell id="burst_trigger" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontColor=#7f4f00;fontSize=14;dashed=1;" value="Peak demand detected&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Load / latency threshold&lt;/font&gt;" vertex="1">
+          <mxGeometry height="70" width="260" x="1240" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="burst_compute" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontColor=#7f4f00;fontSize=14;dashed=1;" value="Secondary cloud capacity&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Provision extra backend instances&lt;/font&gt;" vertex="1">
+          <mxGeometry height="85" width="260" x="1240" y="285" as="geometry" />
+        </mxCell>
+        <mxCell id="burst_lb" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontColor=#7f4f00;fontSize=14;dashed=1;" value="Route overflow traffic&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Requires configured cross-cloud routing / health checks&lt;/font&gt;" vertex="1">
+          <mxGeometry height="95" width="260" x="1240" y="425" as="geometry" />
+        </mxCell>
+        <mxCell id="burst_scalein" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontColor=#7f4f00;fontSize=14;dashed=1;" value="Scale in when demand falls&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Release extra resources&lt;/font&gt;" vertex="1">
+          <mxGeometry height="75" width="260" x="1240" y="575" as="geometry" />
+        </mxCell>
+        <mxCell id="legend" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b7b7b7;fontColor=#333333;fontSize=12;align=left;spacingLeft=10;" value="Legend&lt;br&gt;&lt;font style=&quot;color:#38761d&quot;&gt;Green = implemented backend containers&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;color:#a66b00&quot;&gt;Orange dashed = proposed cloud bursting&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;color:#365F91&quot;&gt;Blue boundary = primary deployment&lt;/font&gt;" vertex="1">
+          <mxGeometry height="75" width="310" x="1215" y="710" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="users" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#52657A;" target="frontend" value="HTTPS / web traffic">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="frontend" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#52657A;" target="lb" value="API requests · /api/">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="lb" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#38761d;exitX=0.2;exitY=1;entryX=0.5;entryY=0;" target="b1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="lb" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#38761d;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="b2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="lb" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#38761d;exitX=0.8;exitY=1;entryX=0.5;entryY=0;" target="b3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="b1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;strokeColor=#9673a6;" target="db" value="database access">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="b2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;strokeColor=#9673a6;" target="db" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="b3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;strokeColor=#9673a6;" target="db" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="burst_trigger" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#d79b00;" target="burst_compute" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="burst_compute" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#d79b00;" target="burst_lb" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="burst_lb" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#d79b00;" target="burst_scalein" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=2;dashed=1;strokeColor=#d79b00;" value="overflow path (proposed)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="780" y="357.5" as="sourcePoint" />
+            <mxPoint x="1350" y="425" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

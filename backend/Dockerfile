@@ -1,13 +1,17 @@
-FROM python:3.12-slim
+FROM python:3.12-alpine
 
 WORKDIR /app
 
 COPY requirements.txt .
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt \
+    && addgroup -S appuser \
+    && adduser -S -G appuser appuser
 
-COPY app.py /app/
-COPY test_app.py /app/
+COPY --chown=appuser:appuser app.py /app/
+COPY --chown=appuser:appuser test_app.py /app/
+
+USER appuser
 
 EXPOSE 5000
 
